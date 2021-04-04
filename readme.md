@@ -95,3 +95,46 @@ process manager, turning this approach to the alternative it contrasts itself
 with. I have already implemented something like this in [node-forever], too.
 
 [node-forever]: https://github.com/TomasHubelbauer/node-forever
+
+### Combine this proof of concept with `node-forever` into another PoC
+
+[node-forever] ensures the program stays alive in the event of its associated
+terminal closing and also that a newly started instance of the program takes
+over the detached background instance so that the user can jump in and out of
+development in the terminal but still has the program running in its latest
+form.
+
+[node-forever]: https://github.com/TomasHubelbauer/node-forever
+
+This program ensures that the running version of the program always reflects
+the latest source code.
+
+Combining the two proof of concept projects could yield a library which when
+used would give one's project the ability to run indefinitely, self-restart on
+code changes and always keep being the version opened through the terminal, if
+any, otherwise run detached in the background.
+
+It could be a pretty sweet approach to local development, not requiring any tool
+like Nodemon, just using a library.
+
+```js
+import immortal from 'https://…';
+
+void async function() {
+  // Make this process have the following properties:
+  // - Detaches upon terminal closure without exitting for continuous operation,
+  //   be it in the background or in the foreground
+  // - Gets replaced by a new instance ran from the terminal when jumping in and
+  //   out of development transparently, no extra steps by the user required
+  // - Restarts itself on source code changes automatically making it so that
+  //   the programmer never needs to restart themselves
+  // - Makes it so that having the terminal open is entirely optional, reserved
+  //   to when you want to see the program output, but otherwise not needed for
+  //   the programs continuous operation off the latest source code
+  if (await immortal()) {
+    return;
+  }
+
+  // Do the program work here as usual
+}()
+```
